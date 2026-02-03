@@ -324,7 +324,7 @@ func (ts *ElementAPITestSuite) TestUpdateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "property validation failed",
 		},
 		{
@@ -339,7 +339,7 @@ func (ts *ElementAPITestSuite) TestUpdateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "property validation failed",
 		},
 	}

@@ -461,7 +461,7 @@ func (ts *ElementAPITestSuite) TestCreateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "property validation failed",
 		},
 		{
@@ -478,7 +478,7 @@ func (ts *ElementAPITestSuite) TestCreateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "resourcePath is required for resource-field-type",
 		},
 		{
@@ -495,7 +495,7 @@ func (ts *ElementAPITestSuite) TestCreateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "property validation failed",
 		},
 		{
@@ -510,7 +510,7 @@ func (ts *ElementAPITestSuite) TestCreateElement_ErrorCases() {
 			},
 			setHeaders:      true,
 			expectedStatus:  http.StatusInternalServerError,
-			expectedCode:    "CE-5011",
+			expectedCode:    "CE-5010",
 			messageContains: "resourcePath is required for resource-field-type",
 		},
 

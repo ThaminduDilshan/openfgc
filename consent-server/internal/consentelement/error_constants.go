@@ -65,26 +65,12 @@ var (
 		Message:     "Element name too long",
 		Description: "Element name must not exceed 255 characters",
 	}
-	// ErrorElementTypeTooLong is the error returned when element type exceeds maximum length.
-	ErrorElementTypeTooLong = serviceerror.ServiceError{
-		Type:        serviceerror.ClientErrorType,
-		Code:        "CE-1007",
-		Message:     "Element type too long",
-		Description: "Element type exceeds maximum length",
-	}
 	// ErrorElementDescriptionTooLong is the error returned when element description exceeds maximum length.
 	ErrorElementDescriptionTooLong = serviceerror.ServiceError{
 		Type:        serviceerror.ClientErrorType,
 		Code:        "CE-1008",
 		Message:     "Element description too long",
 		Description: "Element description must not exceed 1024 characters",
-	}
-	// ErrorInvalidProperties is the error returned when element properties are invalid for the element type.
-	ErrorInvalidProperties = serviceerror.ServiceError{
-		Type:        serviceerror.ClientErrorType,
-		Code:        "CE-1009",
-		Message:     "Invalid properties",
-		Description: "Invalid properties for element type",
 	}
 	// ErrorInvalidElementType is the error returned when an invalid element type is provided.
 	ErrorInvalidElementType = serviceerror.ServiceError{
@@ -146,12 +132,12 @@ var (
 		Message:     "Failed to check name existence",
 		Description: "An error occurred while checking if the element name exists",
 	}
-	// ErrorCheckElementUsage is the error returned when checking element usage fails.
-	ErrorCheckElementUsage = serviceerror.ServiceError{
+	// ErrorReadElement is the error returned when reading an element fails.
+	ErrorReadElement = serviceerror.ServiceError{
 		Type:        serviceerror.ServerErrorType,
 		Code:        "CE-5002",
-		Message:     "Failed to check element usage",
-		Description: "An error occurred while checking if the element is in use",
+		Message:     "Failed to read element",
+		Description: "An error occurred while reading the element",
 	}
 	// ErrorCreateElement is the error returned when creating an element fails.
 	ErrorCreateElement = serviceerror.ServiceError{
@@ -159,34 +145,6 @@ var (
 		Code:        "CE-5003",
 		Message:     "Failed to create element",
 		Description: "An error occurred while creating the element",
-	}
-	// ErrorCreateElementsBatch is the error returned when creating elements in batch fails.
-	ErrorCreateElementsBatch = serviceerror.ServiceError{
-		Type:        serviceerror.ServerErrorType,
-		Code:        "CE-5004",
-		Message:     "Failed to create elements in batch",
-		Description: "An error occurred while creating elements in batch",
-	}
-	// ErrorRetrieveElement is the error returned when retrieving an element fails.
-	ErrorRetrieveElement = serviceerror.ServiceError{
-		Type:        serviceerror.ServerErrorType,
-		Code:        "CE-5005",
-		Message:     "Failed to retrieve element",
-		Description: "An error occurred while retrieving the element",
-	}
-	// ErrorListElements is the error returned when listing elements fails.
-	ErrorListElements = serviceerror.ServiceError{
-		Type:        serviceerror.ServerErrorType,
-		Code:        "CE-5006",
-		Message:     "Failed to list elements",
-		Description: "An error occurred while listing elements",
-	}
-	// ErrorLoadProperties is the error returned when loading element properties fails.
-	ErrorLoadProperties = serviceerror.ServiceError{
-		Type:        serviceerror.ServerErrorType,
-		Code:        "CE-5007",
-		Message:     "Failed to load properties",
-		Description: "An error occurred while loading element properties",
 	}
 	// ErrorUpdateElement is the error returned when updating an element fails.
 	ErrorUpdateElement = serviceerror.ServiceError{
@@ -202,18 +160,11 @@ var (
 		Message:     "Failed to delete element",
 		Description: "An error occurred while deleting the element",
 	}
-	// ErrorValidateElementName is the error returned when validating element names fails.
-	ErrorValidateElementName = serviceerror.ServiceError{
+	// ErrorValidateElement is the error returned when validating element fails.
+	ErrorValidateElement = serviceerror.ServiceError{
 		Type:        serviceerror.ServerErrorType,
 		Code:        "CE-5010",
-		Message:     "Failed to validate element names",
-		Description: "An error occurred while validating element names",
-	}
-	// ErrorPropertyValidationFailed is the error returned when property validation fails.
-	ErrorPropertyValidationFailed = serviceerror.ServiceError{
-		Type:        serviceerror.ServerErrorType,
-		Code:        "CE-5011",
-		Message:     "Property validation failed",
-		Description: "An error occurred while validating element properties",
+		Message:     "Failed to validate element",
+		Description: "An error occurred while validating element",
 	}
 )

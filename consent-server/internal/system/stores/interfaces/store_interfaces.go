@@ -79,16 +79,12 @@ type ConsentElementStore interface {
 	List(ctx context.Context, orgID string, limit, offset int, name string) ([]consentElementModel.ConsentElement, int, error)
 	CheckNameExists(ctx context.Context, name, orgID string) (bool, error)
 	GetPropertiesByElementID(ctx context.Context, elementID, orgID string) ([]consentElementModel.ConsentElementProperty, error)
-	GetMappingsByConsentID(ctx context.Context, consentID, orgID string) ([]consentElementModel.ConsentElementMapping, error)
-	GetMappingsByConsentIDs(ctx context.Context, consentIDs []string, orgID string) ([]consentElementModel.ConsentElementMapping, error)
 	GetIDsByNames(ctx context.Context, names []string, orgID string) (map[string]string, error)
 	Create(tx dbmodel.TxInterface, element *consentElementModel.ConsentElement) error
 	Update(tx dbmodel.TxInterface, element *consentElementModel.ConsentElement) error
 	Delete(tx dbmodel.TxInterface, elementID, orgID string) error
 	CreateProperties(tx dbmodel.TxInterface, properties []consentElementModel.ConsentElementProperty) error
 	DeletePropertiesByElementID(tx dbmodel.TxInterface, elementID, orgID string) error
-	LinkElementToConsent(tx dbmodel.TxInterface, consentID, elementID, orgID string, value *string, isUserApproved, isMandatory bool) error
-	DeleteMappingsByConsentID(tx dbmodel.TxInterface, consentID, orgID string) error
 }
 
 // ConsentPurposeStore defines the interface for purpose data operations

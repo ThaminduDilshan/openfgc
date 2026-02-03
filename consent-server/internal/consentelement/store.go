@@ -96,32 +96,9 @@ var (
 		Query: "DELETE FROM CONSENT_ELEMENT_PROPERTY WHERE ELEMENT_ID = ? AND ORG_ID = ?",
 	}
 
-	QueryLinkElementToConsent = dbmodel.DBQuery{
-		ID:    "LINK_ELEMENT_TO_CONSENT",
-		Query: "INSERT INTO CONSENT_ELEMENT_MAPPING (CONSENT_ID, ELEMENT_ID, ORG_ID, VALUE, IS_USER_APPROVED, IS_MANDATORY) VALUES (?, ?, ?, ?, ?, ?)",
-	}
-
-	QueryGetMappingsByConsentID = dbmodel.DBQuery{
-		ID: "GET_MAPPINGS_BY_CONSENT_ID",
-		Query: `SELECT cpm.CONSENT_ID, cpm.ELEMENT_ID, cpm.ORG_ID, cpm.VALUE, cpm.IS_USER_APPROVED, cpm.IS_MANDATORY, cp.NAME
-				FROM CONSENT_ELEMENT_MAPPING cpm
-				INNER JOIN CONSENT_ELEMENT cp ON cpm.ELEMENT_ID = cp.ID
-				WHERE cpm.CONSENT_ID = ? AND cpm.ORG_ID = ?`,
-	}
-
 	QueryGetIDsByNames = dbmodel.DBQuery{
 		ID:    "GET_IDS_BY_NAMES",
 		Query: "SELECT ID, NAME FROM CONSENT_ELEMENT WHERE ORG_ID = ? AND NAME IN (%s)",
-	}
-
-	QueryDeleteMappingsByConsentID = dbmodel.DBQuery{
-		ID:    "DELETE_MAPPINGS_BY_CONSENT_ID",
-		Query: "DELETE FROM CONSENT_ELEMENT_MAPPING WHERE CONSENT_ID = ? AND ORG_ID = ?",
-	}
-
-	QueryGetMappingsByConsentIDs = dbmodel.DBQuery{
-		ID:    "GET_MAPPINGS_BY_CONSENT_IDS",
-		Query: "", // Built dynamically
 	}
 )
 
@@ -312,190 +289,55 @@ func (elementStore *store) DeletePropertiesByElementID(tx dbmodel.TxInterface, e
 	return err
 }
 
+// getString extracts a string value from a database row column that may be string or []byte
+func getString(row map[string]interface{}, keys ...string) string {
+	for _, key := range keys {
+		if val, ok := row[key]; ok {
+			switch v := val.(type) {
+			case string:
+				return v
+			case []byte:
+				return string(v)
+			}
+		}
+	}
+	return ""
+}
+
 // mapToConsentElement maps a database row to ConsentElement model
-// Note: DBClient normalizes column names to lowercase
 func mapToConsentElement(row map[string]interface{}) *model.ConsentElement {
 	if row == nil {
 		return nil
 	}
 
-	element := &model.ConsentElement{}
-
-	// Handle string columns (may be string or []byte from MySQL)
-	if id, ok := row["id"].(string); ok {
-		element.ID = id
-	} else if id, ok := row["id"].([]byte); ok {
-		element.ID = string(id)
+	element := &model.ConsentElement{
+		ID:         getString(row, "id"),
+		Name:       getString(row, "name"),
+		Type:       getString(row, "type"),
+		OrgID:      getString(row, "org_id"),
+		Properties: make(map[string]string),
 	}
 
-	if name, ok := row["name"].(string); ok {
-		element.Name = name
-	} else if name, ok := row["name"].([]byte); ok {
-		element.Name = string(name)
+	if desc := getString(row, "description"); desc != "" {
+		element.Description = &desc
 	}
-
-	if desc, ok := row["description"].(string); ok {
-		descCopy := desc
-		element.Description = &descCopy
-	} else if desc, ok := row["description"].([]byte); ok {
-		descCopy := string(desc)
-		element.Description = &descCopy
-	}
-
-	if pType, ok := row["type"].(string); ok {
-		element.Type = pType
-	} else if pType, ok := row["type"].([]byte); ok {
-		element.Type = string(pType)
-	}
-
-	if orgID, ok := row["org_id"].(string); ok {
-		element.OrgID = orgID
-	} else if orgID, ok := row["org_id"].([]byte); ok {
-		element.OrgID = string(orgID)
-	}
-
-	// Initialize empty properties map
-	element.Properties = make(map[string]string)
 
 	return element
 }
 
 // mapToConsentElementProperty maps a database row to ConsentElementProperty model
-// Note: DBClient normalizes column names to lowercase
 func mapToConsentElementProperty(row map[string]interface{}) *model.ConsentElementProperty {
 	if row == nil {
 		return nil
 	}
 
-	attr := &model.ConsentElementProperty{}
-
-	// Handle string columns (may be string or []byte from MySQL)
-	if id, ok := row["id"].(string); ok {
-		attr.ID = id
-	} else if id, ok := row["id"].([]byte); ok {
-		attr.ID = string(id)
+	return &model.ConsentElementProperty{
+		ID:        getString(row, "id"),
+		ElementID: getString(row, "element_id"),
+		Key:       getString(row, "att_key"),
+		Value:     getString(row, "att_value"),
+		OrgID:     getString(row, "org_id"),
 	}
-
-	if elementID, ok := row["element_id"].(string); ok {
-		attr.ElementID = elementID
-	} else if elementID, ok := row["element_id"].([]byte); ok {
-		attr.ElementID = string(elementID)
-	}
-
-	// Try lowercase first (normalized), then uppercase (raw column names)
-	if key, ok := row["attr_key"].(string); ok {
-		attr.Key = key
-	} else if key, ok := row["attr_key"].([]byte); ok {
-		attr.Key = string(key)
-	} else if key, ok := row["att_key"].(string); ok {
-		attr.Key = key
-	} else if key, ok := row["att_key"].([]byte); ok {
-		attr.Key = string(key)
-	} else if key, ok := row["ATT_KEY"].(string); ok {
-		attr.Key = key
-	} else if key, ok := row["ATT_KEY"].([]byte); ok {
-		attr.Key = string(key)
-	}
-
-	if value, ok := row["attr_value"].(string); ok {
-		attr.Value = value
-	} else if value, ok := row["attr_value"].([]byte); ok {
-		attr.Value = string(value)
-	} else if value, ok := row["att_value"].(string); ok {
-		attr.Value = value
-	} else if value, ok := row["att_value"].([]byte); ok {
-		attr.Value = string(value)
-	} else if value, ok := row["ATT_VALUE"].(string); ok {
-		attr.Value = value
-	} else if value, ok := row["ATT_VALUE"].([]byte); ok {
-		attr.Value = string(value)
-	}
-
-	if orgID, ok := row["org_id"].(string); ok {
-		attr.OrgID = orgID
-	} else if orgID, ok := row["org_id"].([]byte); ok {
-		attr.OrgID = string(orgID)
-	}
-
-	return attr
-}
-
-// LinkElementToConsent links an element to a consent within a transaction
-func (elementStore *store) LinkElementToConsent(tx dbmodel.TxInterface, consentID, elementID, orgID string, value *string, isUserApproved, isMandatory bool) error {
-	_, err := tx.Exec(QueryLinkElementToConsent,
-		consentID, elementID, orgID, value, isUserApproved, isMandatory)
-	return err
-}
-
-// GetMappingsByConsentID retrieves all element mappings for a consent with their values
-func (elementStore *store) GetMappingsByConsentID(ctx context.Context, consentID, orgID string) ([]model.ConsentElementMapping, error) {
-	dbClient, err := elementStore.getDBClient()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get database client: %w", err)
-	}
-
-	rows, err := dbClient.Query(QueryGetMappingsByConsentID, consentID, orgID)
-	if err != nil {
-		return nil, err
-	}
-
-	mappings := make([]model.ConsentElementMapping, 0, len(rows))
-	for _, row := range rows {
-		mapping := mapToConsentElementMapping(row)
-		if mapping != nil {
-			mappings = append(mappings, *mapping)
-		}
-	}
-
-	return mappings, nil
-}
-
-// GetMappingsByConsentIDs retrieves element mappings for multiple consents with their values
-func (elementStore *store) GetMappingsByConsentIDs(ctx context.Context, consentIDs []string, orgID string) ([]model.ConsentElementMapping, error) {
-	if len(consentIDs) == 0 {
-		return []model.ConsentElementMapping{}, nil
-	}
-
-	// Build placeholders for IN clause
-	placeholders := ""
-	args := make([]interface{}, 0, len(consentIDs)+1)
-	for i, id := range consentIDs {
-		if i > 0 {
-			placeholders += ", "
-		}
-		placeholders += "?"
-		args = append(args, id)
-	}
-	args = append(args, orgID)
-
-	// Build dynamic query
-	query := dbmodel.DBQuery{
-		ID: QueryGetMappingsByConsentIDs.ID,
-		Query: fmt.Sprintf(`SELECT cpm.CONSENT_ID, cpm.ELEMENT_ID, cpm.ORG_ID, cpm.VALUE, cpm.IS_USER_APPROVED, cpm.IS_MANDATORY, cp.NAME
-				FROM CONSENT_ELEMENT_MAPPING cpm
-				INNER JOIN CONSENT_ELEMENT cp ON cpm.ELEMENT_ID = cp.ID
-				WHERE cpm.CONSENT_ID IN (%s) AND cpm.ORG_ID = ?`, placeholders),
-	}
-
-	dbClient, err := elementStore.getDBClient()
-	if err != nil {
-		return nil, fmt.Errorf("failed to get database client: %w", err)
-	}
-
-	rows, err := dbClient.Query(query, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	mappings := make([]model.ConsentElementMapping, 0, len(rows))
-	for _, row := range rows {
-		mapping := mapToConsentElementMapping(row)
-		if mapping != nil {
-			mappings = append(mappings, *mapping)
-		}
-	}
-
-	return mappings, nil
 }
 
 // GetIDsByNames retrieves element IDs by their names (batch lookup)
@@ -564,66 +406,4 @@ func (elementStore *store) GetIDsByNames(ctx context.Context, names []string, or
 		}
 	}
 	return result, nil
-}
-
-// mapToConsentElementMapping maps a database row to ConsentElementMapping model
-// Note: DBClient normalizes column names to lowercase
-func mapToConsentElementMapping(row map[string]interface{}) *model.ConsentElementMapping {
-	if row == nil {
-		return nil
-	}
-
-	mapping := &model.ConsentElementMapping{}
-
-	// Handle string columns (may be string or []byte from MySQL)
-	if consentID, ok := row["consent_id"].(string); ok {
-		mapping.ConsentID = consentID
-	} else if consentID, ok := row["consent_id"].([]byte); ok {
-		mapping.ConsentID = string(consentID)
-	}
-
-	if elementID, ok := row["element_id"].(string); ok {
-		mapping.ElementID = elementID
-	} else if elementID, ok := row["element_id"].([]byte); ok {
-		mapping.ElementID = string(elementID)
-	}
-
-	if orgID, ok := row["org_id"].(string); ok {
-		mapping.OrgID = orgID
-	} else if orgID, ok := row["org_id"].([]byte); ok {
-		mapping.OrgID = string(orgID)
-	}
-
-	if value, ok := row["value"].(string); ok {
-		mapping.Value = value
-	} else if value, ok := row["value"].([]byte); ok {
-		mapping.Value = string(value)
-	}
-
-	// Handle boolean columns (may be bool or int64 from MySQL)
-	if isUserApproved, ok := row["is_user_approved"].(bool); ok {
-		mapping.IsUserApproved = isUserApproved
-	} else if isUserApproved, ok := row["is_user_approved"].(int64); ok {
-		mapping.IsUserApproved = isUserApproved != 0
-	}
-
-	if isMandatory, ok := row["is_mandatory"].(bool); ok {
-		mapping.IsMandatory = isMandatory
-	} else if isMandatory, ok := row["is_mandatory"].(int64); ok {
-		mapping.IsMandatory = isMandatory != 0
-	}
-
-	if name, ok := row["name"].(string); ok {
-		mapping.Name = name
-	} else if name, ok := row["name"].([]byte); ok {
-		mapping.Name = string(name)
-	}
-
-	return mapping
-}
-
-// DeleteMappingsByConsentID deletes all consent element mappings for a consent within a transaction
-func (elementStore *store) DeleteMappingsByConsentID(tx dbmodel.TxInterface, consentID, orgID string) error {
-	_, err := tx.Exec(QueryDeleteMappingsByConsentID, consentID, orgID)
-	return err
 }

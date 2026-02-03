@@ -50,22 +50,13 @@ func NewStoreRegistry(
 	}
 }
 
-// getDBClient retrieves the database client from the provider
-func (r *StoreRegistry) getDBClient() (provider.DBClientInterface, error) {
-	return provider.GetDBProvider().GetConsentDBClient()
-}
-
 // ExecuteTransaction executes multiple store operations in a single transaction.
 // It provides automatic transaction management including rollback on error and panic recovery.
-//
-// Note: This method uses manual transaction management. Consider using context-based
-// transactions with Transactioner for new code, which provides better integration
-// with context propagation and automatic commit/rollback handling.
 func (r *StoreRegistry) ExecuteTransaction(queries []func(tx dbmodel.TxInterface) error) error {
 	logger := log.GetLogger()
 	logger.Debug("Starting transaction", log.Int("query_count", len(queries)))
 
-	dbClient, err := r.getDBClient()
+	dbClient, err := provider.GetDBProvider().GetConsentDBClient()
 	if err != nil {
 		logger.Error("Failed to get database client", log.Error(err))
 		return err
