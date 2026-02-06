@@ -59,46 +59,42 @@ The Consent is the immutable evidence of a user’s decision regarding specific 
 ```
 openfgc/
 ├── api/                                    # OpenAPI specifications
-│   ├── consent-management-API.yaml        # Consent API spec
-│   └── config-management-API.yaml         # Config API spec
+│   ├── consent-management-API.yaml         # Consent API spec
 ├── consent-server/                         # Main application
 │   ├── cmd/
 │   │   └── server/
-│   │       ├── main.go                    # Application entry point
-│   │       └── servicemanager.go          # Service initialization
+│   │       ├── main.go                     # Application entry point
+│   │       └── servicemanager.go           # Service initialization
 │   ├── internal/
-│   │   ├── consent/                       # Consent module
-│   │   │   ├── handler.go                # HTTP handlers
-│   │   │   ├── service.go                # Business logic
-│   │   │   ├── store.go                  # Data access layer
-│   │   │   ├── init.go                   # Route registration
-│   │   │   ├── model/                    # Domain models
-│   │   │   └── validator/                # Request validators
-│   │   ├── consentpurpose/               # Consent purpose module
-│   │   ├── authresource/                 # Auth resource module
-│   │   └── system/                       # Shared system components
-│   │       ├── config/                   # Configuration management
-│   │       ├── database/                 # Database client & transactions
-│   │       ├── error/                    # Error handling
-│   │       ├── middleware/               # HTTP middleware
-│   │       ├── stores/                   # Store registry
-│   │       └── utils/                    # Utilities
+│   │   ├── authresource/                   # Authorization resource module
+│   │   ├── consent/                        # Consent module
+│   │   ├── consentelement/                 # Consent element module
+│   │   ├── consentpurpose/                 # Consent purpose module
+│   │   └── system/                         # Shared system components
+│   │       ├── config/                     # Configuration management
+│   │       ├── database/                   # Database client & transactions
+│   │       ├── error/                      # Error handling
+│   │       ├── healthcheck/                # Health check endpoints
+│   │       ├── log/                        # Logging infrastructure
+│   │       ├── middleware/                 # HTTP middleware
+│   │       ├── stores/                     # Store registry
+│   │       └── utils/                      # Utilities
 │   ├── dbscripts/
-│   │   ├── db_schema_mysql.sql           # Consent tables schema
-│   │   └── WIP-db_schema_config_mysql.sql # Config tables schema
-│   └── docs/                             # Documentation
-├── tests/integration/                     # Integration tests
-│   ├── api/
-│   │   ├── consent/                      # Consent API tests
-│   │   ├── consent-purpose/              # Purpose API tests
-│   │   └── auth_resource_api_test.go     # Auth resource tests
-│   └── go.mod                            # Test dependencies
-├── build.sh                              # Build script
-├── start.sh                              # Server startup script
-├── target/                               # Build output directory (generated)
-│   ├── server/                           # Runnable server artifacts
-│   └── dist/                             # Distribution packages
-└── version.txt                           # Version information
+│   │   ├── db_schema_mysql.sql             # Consent tables schema
+│   │   └── WIP-db_schema_config_mysql.sql  # Config tables schema
+│   └── docs/                               # Internal documentation
+├── tests/
+│   └── integration/                        # Integration tests
+│       ├── consent/                        # Consent API tests
+│       ├── consentelement/                 # Consent element tests
+│       ├── consentpurpose/                 # Consent purpose tests
+│       └── main.go                         # Test runner
+├── build.sh                                # Build script
+├── start.sh                                # Server startup script
+├── target/                                 # Build output directory (generated)
+│   ├── server/                             # Runnable server artifacts
+│   └── dist/                               # Distribution packages
+└── version.txt                             # Version information
 ```
 
 ## Quick Start
@@ -175,6 +171,8 @@ Health check: `curl http://localhost:3000/health`
 
 - [Open Fine-Grained Consent API schema](api/consent-management-API.yaml)
 - [Configuration API schema](api/config-management-API.yaml)
+
+> **Tip:** You can import these OpenAPI specifications directly into [Postman](https://www.postman.com/) or similar tools to easily explore and test the API.
 
 All requests require headers:
 - `org-id`: Organization identifier
