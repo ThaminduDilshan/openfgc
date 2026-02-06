@@ -3,7 +3,7 @@ info:
   version: v1.0
   title: Consent Management API
   description: |
-    This API provides a comprehensive set of endpoints for managing consents and consent elements.
+    This API provides a comprehensive set of endpoints for managing consent elements, consent purposes and consents.
 
     **Key Concepts:**
 

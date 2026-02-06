@@ -3,10 +3,6 @@
 -- Description: Schema for configuration resource management system with attributes
 -- Compatible with: MySQL 8.0+
 
--- Drop tables if they exist (for clean reinstall)
-DROP TABLE IF EXISTS CONFIG_ATTRIBUTE;
-DROP TABLE IF EXISTS CONFIG_RESOURCE;
-
 -- =====================================================================
 -- Main configuration resource table
 -- Stores configuration metadata for resources
