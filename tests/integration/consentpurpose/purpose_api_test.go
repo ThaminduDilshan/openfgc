@@ -199,7 +199,7 @@ func (ts *PurposeAPITestSuite) getPurpose(purposeID string) (*http.Response, []b
 }
 
 // listPurposes lists consent purposes with optional filters
-func (ts *PurposeAPITestSuite) listPurposes(name string, clientIDs []string, purposeNames []string, limit, offset int) (*http.Response, []byte) {
+func (ts *PurposeAPITestSuite) listPurposes(name string, clientIDs []string, elementNames []string, limit, offset int) (*http.Response, []byte) {
 	url := fmt.Sprintf("%s/api/v1/consent-purposes?limit=%d&offset=%d", testServerURL, limit, offset)
 
 	if name != "" {
@@ -210,8 +210,8 @@ func (ts *PurposeAPITestSuite) listPurposes(name string, clientIDs []string, pur
 		url += fmt.Sprintf("&clientIds=%s", joinStrings(clientIDs, ","))
 	}
 
-	if len(purposeNames) > 0 {
-		url += fmt.Sprintf("&purposeNames=%s", joinStrings(purposeNames, ","))
+	if len(elementNames) > 0 {
+		url += fmt.Sprintf("&elementNames=%s", joinStrings(elementNames, ","))
 	}
 
 	httpReq, _ := http.NewRequest("GET", url, nil)

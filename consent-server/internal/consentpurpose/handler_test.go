@@ -295,7 +295,7 @@ func TestListPurposes_WithFilters(t *testing.T) {
 
 	handler := newConsentPurposeHandler(mockService)
 	req := httptest.NewRequest(http.MethodGet,
-		"/consent-purposes?name=Test%20Purpose&clientIds=client-1,client-2&purposeNames=elem1&offset=10&limit=20", nil)
+		"/consent-purposes?name=Test%20Purpose&clientIds=client-1,client-2&elementNames=elem1&offset=10&limit=20", nil)
 	req.Header.Set(constants.HeaderOrgID, testOrgID)
 	rr := httptest.NewRecorder()
 

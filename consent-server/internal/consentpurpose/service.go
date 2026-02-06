@@ -21,6 +21,7 @@ package consentpurpose
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/wso2/openfgc/internal/consentpurpose/model"
@@ -35,7 +36,7 @@ import (
 type ConsentPurposeService interface {
 	CreatePurpose(ctx context.Context, req model.CreateRequest, orgID, clientID string) (*model.ConsentPurpose, *serviceerror.ServiceError)
 	GetPurpose(ctx context.Context, purposeID, orgID string) (*model.ConsentPurpose, *serviceerror.ServiceError)
-	ListPurposes(ctx context.Context, orgID, name string, clientIDs []string, purposeNames []string, offset, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError)
+	ListPurposes(ctx context.Context, orgID, name string, clientIDs []string, elementNames []string, offset, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError)
 	UpdatePurpose(ctx context.Context, purposeID string, req model.UpdateRequest, orgID, clientID string) (*model.ConsentPurpose, *serviceerror.ServiceError)
 	DeletePurpose(ctx context.Context, purposeID, orgID string) *serviceerror.ServiceError
 }
@@ -160,16 +161,18 @@ func (s *consentPurposeService) GetPurpose(ctx context.Context, purposeID, orgID
 }
 
 // ListPurposes retrieves a list of consent purposes with optional filters
-func (s *consentPurposeService) ListPurposes(ctx context.Context, orgID, name string, clientIDs []string, purposeNames []string, offset, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError) {
+func (s *consentPurposeService) ListPurposes(ctx context.Context, orgID, name string, clientIDs []string, elementNames []string, offset, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError) {
 	logger := log.GetLogger().WithContext(ctx)
 
 	logger.Debug("Listing consent purposes",
 		log.String("org_id", orgID),
-		log.String("names", name),
+		log.String("name", name),
+		log.String("client_ids", strings.Join(clientIDs, ",")),
+		log.String("element_names", strings.Join(elementNames, ",")),
 		log.Int("offset", offset),
 		log.Int("limit", limit))
 
-	purposes, total, err := s.stores.ConsentPurpose.ListPurposes(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+	purposes, total, err := s.stores.ConsentPurpose.ListPurposes(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	if err != nil {
 		logger.Error("Failed to list consent purposes", log.Error(err))
 		return nil, 0, &ErrorListPurposes

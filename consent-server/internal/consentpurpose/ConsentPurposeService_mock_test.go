@@ -100,9 +100,9 @@ func (_m *MockConsentPurposeService) GetPurpose(ctx context.Context, purposeID s
 	return r0, r1
 }
 
-// ListPurposes provides a mock function with given fields: ctx, orgID, name, clientIDs, purposeNames, offset, limit
-func (_m *MockConsentPurposeService) ListPurposes(ctx context.Context, orgID string, name string, clientIDs []string, purposeNames []string, offset int, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError) {
-	ret := _m.Called(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+// ListPurposes provides a mock function with given fields: ctx, orgID, name, clientIDs, elementNames, offset, limit
+func (_m *MockConsentPurposeService) ListPurposes(ctx context.Context, orgID string, name string, clientIDs []string, elementNames []string, offset int, limit int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError) {
+	ret := _m.Called(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListPurposes")
@@ -112,10 +112,10 @@ func (_m *MockConsentPurposeService) ListPurposes(ctx context.Context, orgID str
 	var r1 int
 	var r2 *serviceerror.ServiceError
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, []string, []string, int, int) ([]model.ConsentPurpose, int, *serviceerror.ServiceError)); ok {
-		return rf(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+		return rf(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	}
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, []string, []string, int, int) []model.ConsentPurpose); ok {
-		r0 = rf(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+		r0 = rf(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]model.ConsentPurpose)
@@ -123,13 +123,13 @@ func (_m *MockConsentPurposeService) ListPurposes(ctx context.Context, orgID str
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string, string, []string, []string, int, int) int); ok {
-		r1 = rf(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+		r1 = rf(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	} else {
 		r1 = ret.Get(1).(int)
 	}
 
 	if rf, ok := ret.Get(2).(func(context.Context, string, string, []string, []string, int, int) *serviceerror.ServiceError); ok {
-		r2 = rf(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+		r2 = rf(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	} else {
 		if ret.Get(2) != nil {
 			r2 = ret.Get(2).(*serviceerror.ServiceError)

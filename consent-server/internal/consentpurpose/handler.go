@@ -140,15 +140,15 @@ func (h *consentPurposeHandler) listPurposes(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	// Parse purposeNames (comma-separated)
-	var purposeNames []string
-	if purposeNamesParam := queryParams.Get("purposeNames"); purposeNamesParam != "" {
-		split := strings.Split(purposeNamesParam, ",")
+	// Parse elementNames (comma-separated) - filter purposes by element names they contain
+	var elementNames []string
+	if elementNamesParam := queryParams.Get("elementNames"); elementNamesParam != "" {
+		split := strings.Split(elementNamesParam, ",")
 		// Trim spaces and filter out empty strings
 		for i := range split {
 			trimmed := strings.TrimSpace(split[i])
 			if trimmed != "" {
-				purposeNames = append(purposeNames, trimmed)
+				elementNames = append(elementNames, trimmed)
 			}
 		}
 	}
@@ -169,7 +169,7 @@ func (h *consentPurposeHandler) listPurposes(w http.ResponseWriter, r *http.Requ
 	}
 
 	// List consent purposes
-	purposes, total, serviceErr := h.service.ListPurposes(ctx, orgID, name, clientIDs, purposeNames, offset, limit)
+	purposes, total, serviceErr := h.service.ListPurposes(ctx, orgID, name, clientIDs, elementNames, offset, limit)
 	if serviceErr != nil {
 		utils.SendError(w, r, serviceErr)
 		return

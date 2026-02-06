@@ -294,6 +294,11 @@ func (s *store) Search(ctx context.Context, filters model.ConsentSearchFilters) 
 	if len(countRows) > 0 {
 		if count, ok := countRows[0]["count"].(int64); ok {
 			totalCount = int(count)
+		} else if countVal, ok := countRows[0]["count"].([]uint8); ok {
+			// MySQL may return count as []uint8
+			if parsedCount, parseErr := strconv.ParseInt(string(countVal), 10, 64); parseErr == nil {
+				totalCount = int(parsedCount)
+			}
 		}
 	}
 
@@ -509,8 +514,8 @@ func mapToConsent(row map[string]interface{}) *model.Consent {
 
 	return &model.Consent{
 		ConsentID:                  getString(row, "consent_id"),
-		CreatedTime:                row["created_time"].(int64),
-		UpdatedTime:                row["updated_time"].(int64),
+		CreatedTime:                getInt64(row, "created_time"),
+		UpdatedTime:                getInt64(row, "updated_time"),
 		ClientID:                   getString(row, "client_id"),
 		ConsentType:                getString(row, "consent_type"),
 		CurrentStatus:              getString(row, "current_status"),
@@ -661,6 +666,36 @@ func getString(row map[string]interface{}, key string) string {
 		return string(val)
 	}
 	return ""
+}
+
+// getInt64 safely extracts an int64 value from a database row map
+// Handles various types returned by different DB drivers
+func getInt64(row map[string]interface{}, key string) int64 {
+	val := row[key]
+	if val == nil {
+		return 0
+	}
+
+	switch v := val.(type) {
+	case int64:
+		return v
+	case int32:
+		return int64(v)
+	case int:
+		return int64(v)
+	case float64:
+		return int64(v)
+	case []uint8: // byte slice
+		if parsed, err := strconv.ParseInt(string(v), 10, 64); err == nil {
+			return parsed
+		}
+	case string:
+		if parsed, err := strconv.ParseInt(v, 10, 64); err == nil {
+			return parsed
+		}
+	}
+
+	return 0
 }
 
 func getBool(row map[string]interface{}, key string) bool {
