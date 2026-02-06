@@ -130,20 +130,26 @@ func (h *consentPurposeHandler) listPurposes(w http.ResponseWriter, r *http.Requ
 	// Parse clientIds (comma-separated)
 	var clientIDs []string
 	if clientIDsParam := queryParams.Get("clientIds"); clientIDsParam != "" {
-		clientIDs = strings.Split(clientIDsParam, ",")
-		// Trim spaces
-		for i := range clientIDs {
-			clientIDs[i] = strings.TrimSpace(clientIDs[i])
+		split := strings.Split(clientIDsParam, ",")
+		// Trim spaces and filter out empty strings
+		for i := range split {
+			trimmed := strings.TrimSpace(split[i])
+			if trimmed != "" {
+				clientIDs = append(clientIDs, trimmed)
+			}
 		}
 	}
 
 	// Parse purposeNames (comma-separated)
 	var purposeNames []string
 	if purposeNamesParam := queryParams.Get("purposeNames"); purposeNamesParam != "" {
-		purposeNames = strings.Split(purposeNamesParam, ",")
-		// Trim spaces
-		for i := range purposeNames {
-			purposeNames[i] = strings.TrimSpace(purposeNames[i])
+		split := strings.Split(purposeNamesParam, ",")
+		// Trim spaces and filter out empty strings
+		for i := range split {
+			trimmed := strings.TrimSpace(split[i])
+			if trimmed != "" {
+				purposeNames = append(purposeNames, trimmed)
+			}
 		}
 	}
 

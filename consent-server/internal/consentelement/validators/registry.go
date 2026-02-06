@@ -39,9 +39,15 @@ func init() {
 	defaultRegistry = NewElementTypeHandlerRegistry()
 
 	// Register built-in handlers
-	_ = defaultRegistry.Register(&BasicElementTypeHandler{})
-	_ = defaultRegistry.Register(&JsonPayloadElementTypeHandler{})
-	_ = defaultRegistry.Register(&ResourceFieldElementTypeHandler{})
+	if err := defaultRegistry.Register(&BasicElementTypeHandler{}); err != nil {
+		panic(fmt.Sprintf("failed to register BasicElementTypeHandler: %v", err))
+	}
+	if err := defaultRegistry.Register(&JsonPayloadElementTypeHandler{}); err != nil {
+		panic(fmt.Sprintf("failed to register JsonPayloadElementTypeHandler: %v", err))
+	}
+	if err := defaultRegistry.Register(&ResourceFieldElementTypeHandler{}); err != nil {
+		panic(fmt.Sprintf("failed to register ResourceFieldElementTypeHandler: %v", err))
+	}
 }
 
 // NewElementTypeHandlerRegistry creates a new registry instance

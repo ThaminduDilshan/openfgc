@@ -75,8 +75,6 @@ func (h *consentHandler) getConsent(w http.ResponseWriter, r *http.Request) {
 	consentID := r.PathValue("consentId")
 	orgID := r.Header.Get(constants.HeaderOrgID)
 
-	// TODO: Is clientID validation needed?
-
 	if err := utils.ValidateOrgID(orgID); err != nil {
 		utils.SendError(w, r, serviceerror.CustomServiceError(ErrorValidationFailed, err.Error()))
 		return

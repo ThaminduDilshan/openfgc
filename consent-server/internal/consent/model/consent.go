@@ -215,10 +215,12 @@ func (req *AuthorizationAPIRequest) ToAuthResourceCreateRequest() *authmodel.Con
 		userID = &req.UserID
 	}
 
-	// Default status to "approved" if not provided
+	// Default status to "created" if not provided
+	// Note: This defaults to CreatedState (unlike consent-embedded authorizations which default to ApprovedState)
+	// because direct authorization creation typically requires explicit approval workflow
 	status := req.Status
 	if status == "" {
-		status = string(AuthStatusMappings.CreatedState) // Default to "created" state
+		status = string(AuthStatusMappings.CreatedState)
 	}
 
 	return &authmodel.ConsentAuthResourceCreateRequest{
@@ -455,6 +457,8 @@ func (req *ConsentAPIRequest) ToConsentCreateRequest() (*ConsentCreateRequest, e
 			}
 
 			// Default status to "approved" if not provided
+			// Note: Consent-embedded authorizations default to ApprovedState (unlike direct auth resource
+			// creation which defaults to CreatedState) because they're created as part of consent flow
 			status := auth.Status
 			if status == "" {
 				status = string(AuthStatusMappings.ApprovedState)
@@ -535,6 +539,8 @@ func (req *ConsentAPIUpdateRequest) ToConsentUpdateRequest() (*ConsentUpdateRequ
 			}
 
 			// Default status to "approved" if not provided
+			// Note: Consent-embedded authorizations default to ApprovedState (unlike direct auth resource
+			// creation which defaults to CreatedState) because they're created as part of consent flow
 			status := auth.Status
 			if status == "" {
 				status = string(AuthStatusMappings.ApprovedState)

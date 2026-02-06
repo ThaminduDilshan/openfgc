@@ -49,7 +49,7 @@ func ValidateConsentCreateRequest(req model.ConsentAPIRequest, clientID, orgID s
 		if authReq.Type == "" {
 			return fmt.Errorf("authorizations[%d].type is required", i)
 		}
-		// Status is optional and defaults to "approved" in the ToAuthResourceCreateRequest method
+		// Status is optional and defaults to "created" in ToAuthResourceCreateRequest (or "approved" in consent-embedded flows)
 		if authReq.Status != "" {
 			if err := authvalidator.ValidateAuthStatus(authReq.Status); err != nil {
 				return fmt.Errorf("authorizations[%d]: %w", i, err)

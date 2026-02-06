@@ -54,7 +54,7 @@ var (
 	// ErrorPurposeInUse is the error returned when attempting to change a purpose that is in use.
 	ErrorPurposeInUse = serviceerror.ServiceError{
 		Type:        serviceerror.ClientErrorType,
-		Code:        "CS-4090",
+		Code:        "CP-4090",
 		Message:     "Purpose in use",
 		Description: "Cannot change purpose as it is being used in one or more consents",
 	}

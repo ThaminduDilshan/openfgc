@@ -319,7 +319,7 @@ func (s *consentPurposeService) DeletePurpose(ctx context.Context, purposeID, or
 	inUse, checkErr := s.stores.Consent.CheckPurposeUsedInConsents(ctx, purposeID, orgID)
 	if checkErr != nil {
 		logger.Error("Failed to check if purpose is in use", log.Error(checkErr))
-		return &ErrorInternalServerError
+		return &ErrorCheckPurposeUsage
 	}
 	if inUse {
 		logger.Warn("Cannot delete purpose that is in use by consents", log.String("purpose_id", purposeID))
