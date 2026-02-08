@@ -205,6 +205,8 @@ go build -o bin/consent-server cmd/server/main.go
 ./build.sh test
 ```
 
+> **Note:** Integration tests use the configuration at `tests/integration/repository/conf/deployment.yaml`. If you're using a separate database for testing, ensure it's created and the credentials are updated in this configuration file before running the tests. The test database will be automatically initialized with the required schema.
+
 **Manual Execution**
 
 ```bash
