@@ -59,7 +59,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
-            "program": "${workspaceFolder}/internal",
+            "program": "${workspaceFolder}/consent-server/internal",
             "args": [
                 "-v"
             ],
@@ -70,7 +70,7 @@
             "type": "go",
             "request": "launch",
             "mode": "test",
-            "program": "${workspaceFolder}/integration-tests",
+            "program": "${workspaceFolder}/tests/integration",
             "args": [
                 "-v"
             ],
